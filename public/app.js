@@ -424,9 +424,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (actionsEl) {
               actionsEl.innerHTML = `
-                <button class="btn btn-secondary btn-sm" onclick="openFileInFolder('${escapeHtml(job.outputFile || "")}')">Klasörde Göster</button>
-                <button class="btn btn-primary btn-sm" onclick="playFile('${escapeHtml(job.outputFile || "")}')">▶ Oynat</button>
+                <button class="btn btn-secondary btn-sm btn-card-folder" type="button">Klasörde Göster</button>
+                <button class="btn btn-primary btn-sm btn-card-play" type="button">▶ Oynat</button>
               `;
+              const btnF = actionsEl.querySelector(".btn-card-folder");
+              const btnP = actionsEl.querySelector(".btn-card-play");
+              if (btnF) btnF.addEventListener("click", () => openFileInFolder(job.outputFile || ""));
+              if (btnP) btnP.addEventListener("click", () => playFile(job.outputFile || ""));
             }
 
             eventSource.close();
@@ -606,10 +610,20 @@ document.addEventListener("DOMContentLoaded", () => {
           <td style="color: #94a3b8;">${f.sizeFormatted}</td>
           <td style="color: #94a3b8;">${f.dateFormatted}</td>
           <td style="text-align: right;">
-            <button class="btn btn-secondary btn-sm" onclick="openFileInFolder('${escapeHtml(f.path)}')">Klasörde Göster</button>
-            <button class="btn btn-primary btn-sm" onclick="playFile('${escapeHtml(f.path)}')">Oynat</button>
+            <button class="btn btn-secondary btn-sm btn-row-folder" type="button">Klasörde Göster</button>
+            <button class="btn btn-primary btn-sm btn-row-play" type="button">▶ Oynat</button>
           </td>
         `;
+
+        const btnRowFolder = tr.querySelector(".btn-row-folder");
+        const btnRowPlay = tr.querySelector(".btn-row-play");
+        if (btnRowFolder) {
+          btnRowFolder.addEventListener("click", () => openFileInFolder(f.path));
+        }
+        if (btnRowPlay) {
+          btnRowPlay.addEventListener("click", () => playFile(f.path));
+        }
+
         historyTableBody.appendChild(tr);
       }
     } catch (e) {
@@ -632,21 +646,21 @@ document.addEventListener("DOMContentLoaded", () => {
   loadHistory();
 });
 
-// Global Yardımcı Fonksiyonlar (Pencere seviyesinde erişilebilir)
 function openFileInFolder(filePath) {
   fetch("/api/open-folder", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ filePath }),
-  });
+    body: JSON.stringify({ filePath: filePath || "" }),
+  }).catch((err) => console.error("Klasör açılamadı:", err));
 }
 
 function playFile(filePath) {
+  if (!filePath) return;
   fetch("/api/play-file", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ filePath }),
-  });
+  }).catch((err) => console.error("Dosya oynatılamadı:", err));
 }
 
 function formatBytes(bytes) {

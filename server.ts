@@ -647,7 +647,9 @@ async function handleRequest(req: Request): Promise<Response> {
         try {
           const stat = Deno.statSync(filePath);
           if (stat.isFile) {
-            new Deno.Command("explorer.exe", { args: [`/select,${filePath}`] }).spawn();
+            new Deno.Command("powershell.exe", {
+              args: ["-NoProfile", "-Command", `& explorer.exe /select,"${filePath.replace(/"/g, '`"')}"`],
+            }).spawn();
             return new Response(JSON.stringify({ success: true }), {
               headers: { ...corsHeaders, "Content-Type": "application/json" },
             });
@@ -657,7 +659,9 @@ async function handleRequest(req: Request): Promise<Response> {
         }
       }
 
-      new Deno.Command("explorer.exe", { args: [DOWNLOADS_DIR] }).spawn();
+      new Deno.Command("powershell.exe", {
+        args: ["-NoProfile", "-Command", `Invoke-Item -LiteralPath '${DOWNLOADS_DIR.replace(/'/g, "''")}'`],
+      }).spawn();
 
       return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -675,7 +679,9 @@ async function handleRequest(req: Request): Promise<Response> {
     try {
       const { filePath } = await req.json();
       if (filePath) {
-        new Deno.Command("cmd.exe", { args: ["/c", "start", '""', filePath] }).spawn();
+        new Deno.Command("powershell.exe", {
+          args: ["-NoProfile", "-Command", `Invoke-Item -LiteralPath '${filePath.replace(/'/g, "''")}'`],
+        }).spawn();
         return new Response(JSON.stringify({ success: true }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
