@@ -599,7 +599,7 @@ async function handleRequest(req: Request): Promise<Response> {
     try {
       const files: any[] = [];
       for (const entry of Deno.readDirSync(DOWNLOADS_DIR)) {
-        if (entry.isFile && !entry.name.endsWith(".part") && !entry.name.endsWith(".ytdl")) {
+        if (entry.isFile && !entry.name.endsWith(".part") && !entry.name.endsWith(".ytdl") && entry.name !== ".gitkeep") {
           const fullPath = `${DOWNLOADS_DIR}\\${entry.name}`;
           try {
             const stat = Deno.statSync(fullPath);
