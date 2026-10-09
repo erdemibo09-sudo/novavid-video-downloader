@@ -3,7 +3,20 @@
 const PORT = 3000;
 const ROOT_DIR = Deno.cwd();
 const PUBLIC_DIR = `${ROOT_DIR}\\public`;
-const DOWNLOADS_DIR = `${ROOT_DIR}\\downloads`;
+
+// Windows uyumluluğu için temiz downloads yolu (Türkçe karakter ve Explorer takılmalarını önler)
+const userProfile = Deno.env.get("USERPROFILE") || "";
+let DOWNLOADS_DIR = `${ROOT_DIR}\\downloads`;
+if (userProfile) {
+  const novaVidPath = `${userProfile}\\Desktop\\NovaVid\\downloads`;
+  try {
+    if (Deno.statSync(novaVidPath).isDirectory) {
+      DOWNLOADS_DIR = novaVidPath;
+    }
+  } catch {
+    // fallback to ROOT_DIR\\downloads
+  }
+}
 
 // MIME türleri sözlüğü
 const MIME_TYPES: Record<string, string> = {
@@ -483,6 +496,10 @@ async function handleRequest(req: Request): Promise<Response> {
                 job.status = "merging";
                 job.percent = 99;
                 job.speed = "Birleştiriliyor...";
+                const mergerMatch = trimmed.match(/Merging formats into ["']?([^"']+)["']?/i);
+                if (mergerMatch && mergerMatch[1]) {
+                  job.outputFile = mergerMatch[1].trim();
+                }
                 notifyJob(job);
               } else if (trimmed.includes("[ExtractAudio]") || trimmed.includes("Destination: ")) {
                 if (["mp3", "wav", "m4a", "flac", "opus"].includes(job.formatType)) {
@@ -490,8 +507,17 @@ async function handleRequest(req: Request): Promise<Response> {
                   job.speed = "Ses dönüştürülüyor...";
                   notifyJob(job);
                 }
+                const destMatch = trimmed.match(/Destination:\s*(.+)$/i);
+                if (destMatch && destMatch[1]) {
+                  job.outputFile = destMatch[1].trim();
+                }
               } else if (trimmed.startsWith("[download] Destination: ")) {
-                job.outputFile = trimmed.replace("[download] Destination: ", "");
+                job.outputFile = trimmed.replace("[download] Destination: ", "").trim();
+              } else if (trimmed.includes("has already been downloaded")) {
+                const match = trimmed.match(/\[download\]\s*(?:Destination:\s*)?(.+?)\s+has already been downloaded/i);
+                if (match && match[1]) {
+                  job.outputFile = match[1].trim();
+                }
               }
             }
           }
@@ -506,15 +532,60 @@ async function handleRequest(req: Request): Promise<Response> {
           job.speed = "✓ Tamamlandı";
           job.eta = "00:00";
 
-          // Çıktı dosyasının gerçek boyutunu tespit et
-          if (job.outputFile) {
+          // Çıktı dosyasını doğrula veya en son eklenen dosyayı tespit et
+          let finalPath = job.outputFile;
+          let fileFound = false;
+
+          if (finalPath) {
             try {
-              const stat = Deno.statSync(job.outputFile);
+              if (Deno.statSync(finalPath).isFile) {
+                fileFound = true;
+              }
+            } catch {
+              fileFound = false;
+            }
+          }
+
+          // Eğer outputFile doğrudan bulunamadıysa downloads klasöründeki en son dosyayı bul
+          if (!fileFound) {
+            try {
+              let newestPath = "";
+              let newestMtime = 0;
+              for (const entry of Deno.readDirSync(DOWNLOADS_DIR)) {
+                if (entry.isFile && !entry.name.endsWith(".part") && !entry.name.endsWith(".ytdl") && entry.name !== ".gitkeep") {
+                  const p = `${DOWNLOADS_DIR}\\${entry.name}`;
+                  try {
+                    const s = Deno.statSync(p);
+                    if (s.mtime && s.mtime.getTime() > newestMtime) {
+                      newestMtime = s.mtime.getTime();
+                      newestPath = p;
+                    }
+                  } catch {
+                    // devam et
+                  }
+                }
+              }
+              if (newestPath) {
+                job.outputFile = newestPath;
+                finalPath = newestPath;
+                fileFound = true;
+              }
+            } catch {
+              // devam et
+            }
+          }
+
+          // Çıktı dosyasının gerçek boyutunu tespit et
+          if (finalPath && fileFound) {
+            try {
+              const stat = Deno.statSync(finalPath);
               job.totalBytes = formatBytes(stat.size);
               job.downloadedBytes = job.totalBytes;
             } catch {
               // devam et
             }
+          } else {
+            job.totalBytes = "Tamamlandı";
           }
 
           notifyJob(job);
@@ -665,25 +736,24 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (filePath) {
         try {
-          const stat = Deno.statSync(filePath);
-          if (stat.isFile) {
-            new Deno.Command("powershell.exe", {
-              args: ["-NoProfile", "-Command", `& explorer.exe /select,"${filePath.replace(/"/g, '`"')}"`],
+          if (Deno.statSync(filePath).isFile) {
+            new Deno.Command("explorer.exe", {
+              args: [`/select,${filePath}`],
             }).spawn();
-            return new Response(JSON.stringify({ success: true }), {
+            return new Response(JSON.stringify({ success: true, target: filePath }), {
               headers: { ...corsHeaders, "Content-Type": "application/json" },
             });
           }
         } catch {
-          // dosya tam yolu bulunamadıysa doğrudan downloads klasörünü aç
+          // dosya bulunamadıysa downloads klasörünü aç
         }
       }
 
-      new Deno.Command("powershell.exe", {
-        args: ["-NoProfile", "-Command", `Invoke-Item -LiteralPath '${DOWNLOADS_DIR.replace(/'/g, "''")}'`],
+      new Deno.Command("explorer.exe", {
+        args: [DOWNLOADS_DIR],
       }).spawn();
 
-      return new Response(JSON.stringify({ success: true }), {
+      return new Response(JSON.stringify({ success: true, target: DOWNLOADS_DIR }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     } catch (e: any) {
@@ -697,16 +767,26 @@ async function handleRequest(req: Request): Promise<Response> {
   // 8. Dosyayı Varsayılan Oynatıcıda Aç (POST /api/play-file)
   if (url.pathname === "/api/play-file" && req.method === "POST") {
     try {
-      const { filePath } = await req.json();
+      const body = await req.json().catch(() => ({}));
+      const filePath = body.filePath;
       if (filePath) {
-        new Deno.Command("powershell.exe", {
-          args: ["-NoProfile", "-Command", `Invoke-Item -LiteralPath '${filePath.replace(/'/g, "''")}'`],
-        }).spawn();
-        return new Response(JSON.stringify({ success: true }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        try {
+          if (Deno.statSync(filePath).isFile) {
+            new Deno.Command("cmd.exe", {
+              args: ["/c", "start", '""', filePath],
+            }).spawn();
+            return new Response(JSON.stringify({ success: true }), {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+        } catch {
+          return new Response(
+            JSON.stringify({ error: "Dosya bulunamadı. Başka bir klasöre taşınmış veya silinmiş olabilir." }),
+            { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
       }
-      return new Response(JSON.stringify({ error: "Dosya yolu gerekli" }), {
+      return new Response(JSON.stringify({ error: "Dosya yolu gerekli veya dosya henüz hazır değil." }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });

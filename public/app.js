@@ -668,12 +668,32 @@ document.addEventListener("DOMContentLoaded", () => {
   btnRefreshHistory.addEventListener("click", loadHistory);
 
   // 11. Klasör Açma İşlemleri
+  function triggerOpenFolder(filePath = "") {
+    fetch("/api/open-folder", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ filePath: filePath || "" }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.success) {
+          alert("Klasör açılamadı: " + (data.error || "Bilinmeyen hata"));
+        }
+      })
+      .catch((err) => console.error("Klasör açılamadı:", err));
+  }
+
   btnOpenDownloadsTop.addEventListener("click", () => {
-    fetch("/api/open-folder", { method: "POST" });
+    const originalText = btnOpenDownloadsTop.innerHTML;
+    btnOpenDownloadsTop.innerHTML = `<span>✓ Açıldı!</span>`;
+    setTimeout(() => {
+      btnOpenDownloadsTop.innerHTML = originalText;
+    }, 1500);
+    triggerOpenFolder("");
   });
 
   btnOpenDownloadsHistory.addEventListener("click", () => {
-    fetch("/api/open-folder", { method: "POST" });
+    triggerOpenFolder("");
   });
 
   // İlk yüklemede geçmişi çek
@@ -685,16 +705,36 @@ function openFileInFolder(filePath) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ filePath: filePath || "" }),
-  }).catch((err) => console.error("Klasör açılamadı:", err));
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (!data.success) {
+        alert("Klasör açılamadı: " + (data.error || "Bilinmeyen hata"));
+      }
+    })
+    .catch((err) => console.error("Klasör açılamadı:", err));
 }
 
 function playFile(filePath) {
-  if (!filePath) return;
+  if (!filePath) {
+    alert("Dosya yolu bulunamadı. Dosya henüz indirilmemiş veya başka bir klasöre taşınmış olabilir.");
+    return;
+  }
   fetch("/api/play-file", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ filePath }),
-  }).catch((err) => console.error("Dosya oynatılamadı:", err));
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (!data.success) {
+        alert("Dosya oynatılamadı: " + (data.error || "Dosya bulunamadı veya taşınmış olabilir."));
+      }
+    })
+    .catch((err) => {
+      console.error("Dosya oynatılamadı:", err);
+      alert("Oynatıcı başlatılırken hata oluştu.");
+    });
 }
 
 function formatBytes(bytes) {
