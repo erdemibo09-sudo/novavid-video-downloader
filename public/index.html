@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HD Video İndirici & Dönüştürücü</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Üst Başlık & Durum Çubuğu -->
+    <header class="header">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3" fill="url(#logo-grad)"></polygon>
+            <path d="M19 21v-4M22 19h-6" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"></path>
+            <defs>
+              <linearGradient id="logo-grad" x1="5" y1="3" x2="19" y2="21" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#6366f1" />
+                <stop offset="1" stop-color="#ec4899" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>HD Video İndirici <span class="badge-pro">HD & 4K</span></h1>
+          <p>YouTube, Instagram, TikTok, Twitter/X ve 1000+ siteden indirin ve dönüştürün</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="status-indicator" title="İndirme ve Dönüştürme Motorları Hazır">
+          <span class="status-dot"></span>
+          <span>Motorlar Hazır</span>
+        </div>
+        <button id="btnOpenDownloadsTop" class="btn btn-secondary btn-icon-text">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span>İndirilenler Klasörü</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Navigasyon Sekmeleri -->
+    <nav class="tabs-nav">
+      <button class="tab-btn active" data-tab="tab-downloader">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>Video İndirici</span>
+      </button>
+
+      <button class="tab-btn" data-tab="tab-converter">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+        <span>Dosya Dönüştürücü</span>
+      </button>
+
+      <button class="tab-btn" data-tab="tab-history">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span>İndirilenler & Kütüphane</span>
+      </button>
+
+      <button class="tab-btn" data-tab="tab-sites">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+        <span>Desteklenen Siteler</span>
+      </button>
+    </nav>
+
+    <!-- SEKME 1: VİDEO İNDİRİCİ -->
+    <main class="tab-content active" id="tab-downloader">
+      <!-- Giriş Kartı -->
+      <section class="card input-card">
+        <div class="card-header">
+          <h2>İndirilecek Video Bağlantısı</h2>
+          <span class="card-hint">YouTube, Instagram, TikTok, Twitter/X, Facebook, Vimeo vb.</span>
+        </div>
+
+        <div class="url-input-group">
+          <div class="input-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            <input type="text" id="videoUrlInput" placeholder="Video bağlantısını buraya yapıştırın veya yazın (https://...)" autocomplete="off">
+            <button id="btnPaste" class="btn-secondary btn-sm" title="Panodan Yapıştır">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              </svg>
+              <span>Yapıştır</span>
+            </button>
+          </div>
+
+          <button id="btnQuickDownload" class="btn btn-primary btn-action-main">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Hemen İndir</span>
+          </button>
+
+          <button id="btnFetchInfo" class="btn btn-secondary btn-icon-only" title="Video Detaylarını İncele">
+            <span class="btn-text">🔍 İncele</span>
+            <div class="spinner hidden" id="fetchSpinner"></div>
+          </button>
+        </div>
+
+        <!-- Hızlı Format ve Kalite Seçimi -->
+        <div class="quick-options-bar">
+          <div class="quick-option-item">
+            <span class="opt-label">Format:</span>
+            <div class="chip-group">
+              <label class="chip-label">
+                <input type="radio" name="mainFormatChoice" value="mp4" checked>
+                <span class="chip">🎬 MP4 Video</span>
+              </label>
+              <label class="chip-label">
+                <input type="radio" name="mainFormatChoice" value="mp3">
+                <span class="chip">🎵 MP3 (320 kbps Müzik)</span>
+              </label>
+              <label class="chip-label">
+                <input type="radio" name="mainFormatChoice" value="wav">
+                <span class="chip">🎵 WAV (Kayıpsız)</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="quick-option-item" id="mainQualityWrapper">
+            <span class="opt-label">Kalite:</span>
+            <select id="mainQualitySelect" class="form-select form-select-sm">
+              <option value="best">🌟 En Yüksek (Orijinal HD/4K)</option>
+              <option value="2160">4K Ultra HD (2160p)</option>
+              <option value="1440">2K Quad HD (1440p)</option>
+              <option value="1080" selected>1080p Full HD (Önerilen)</option>
+              <option value="720">720p HD</option>
+              <option value="480">480p Standart</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Canlı Durum Bildirimi -->
+        <div class="url-status-badge hidden" id="urlStatusBadge">
+          <span class="status-pulse-dot"></span>
+          <span id="urlStatusMessage">Bağlantı inceleniyor...</span>
+        </div>
+
+        <!-- Hızlı Site Rozetleri -->
+        <div class="quick-sites">
+          <span class="quick-badge" data-prefix="youtube"><span class="site-dot yt"></span>YouTube</span>
+          <span class="quick-badge" data-prefix="instagram"><span class="site-dot ig"></span>Instagram</span>
+          <span class="quick-badge" data-prefix="tiktok"><span class="site-dot tt"></span>TikTok</span>
+          <span class="quick-badge" data-prefix="twitter"><span class="site-dot x"></span>X / Twitter</span>
+          <span class="quick-badge" data-prefix="facebook"><span class="site-dot fb"></span>Facebook</span>
+          <span class="quick-badge" data-prefix="reddit"><span class="site-dot rd"></span>Reddit</span>
+          <span class="quick-badge" data-prefix="twitch"><span class="site-dot tw"></span>Twitch</span>
+        </div>
+      </section>
+
+      <!-- Video Önizleme Kartı (Gizli başlar, URL incelenince açılır) -->
+      <section class="card preview-card hidden" id="previewCard">
+        <div class="preview-layout">
+          <!-- Sol: Thumbnail & Süre -->
+          <div class="thumb-container">
+            <img id="prevThumb" src="" alt="Thumbnail">
+            <span class="duration-badge" id="prevDuration">00:00</span>
+          </div>
+
+          <!-- Sağ: Başlık, Format ve İndirme Seçenekleri -->
+          <div class="details-container">
+            <h3 id="prevTitle" class="video-title">Video Başlığı</h3>
+            <div class="video-meta">
+              <span id="prevUploader" class="meta-item author">Kanal</span>
+              <span id="prevViews" class="meta-item views">Görüntüleme</span>
+            </div>
+
+            <!-- Format Seçimi -->
+            <div class="options-grid">
+              <div class="option-group">
+                <label>Format Türü:</label>
+                <div class="format-chips">
+                  <label class="chip-label">
+                    <input type="radio" name="formatChoice" value="mp4" checked>
+                    <span class="chip">🎬 MP4 Video</span>
+                  </label>
+                  <label class="chip-label">
+                    <input type="radio" name="formatChoice" value="mp3">
+                    <span class="chip">🎵 MP3 (320 kbps Ses)</span>
+                  </label>
+                  <label class="chip-label">
+                    <input type="radio" name="formatChoice" value="wav">
+                    <span class="chip">🎵 WAV (Kayıpsız)</span>
+                  </label>
+                  <label class="chip-label">
+                    <input type="radio" name="formatChoice" value="m4a">
+                    <span class="chip">🎵 M4A Ses</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Çözünürlük Seçimi (Video için) -->
+              <div class="option-group" id="resolutionGroup">
+                <label for="qualitySelect">Çözünürlük / Kalite:</label>
+                <select id="qualitySelect" class="form-select">
+                  <option value="best">🌟 En Yüksek Kalite (Otomatik HD/4K)</option>
+                  <option value="2160">4K Ultra HD (2160p)</option>
+                  <option value="1440">2K Quad HD (1440p)</option>
+                  <option value="1080" selected>1080p Full HD (Önerilen)</option>
+                  <option value="720">720p HD</option>
+                  <option value="480">480p Standart</option>
+                </select>
+              </div>
+
+              <!-- Altyazı Seçeneği -->
+              <div class="option-group checkbox-group" id="subsGroup">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="chkSubtitles">
+                  <span>Altyazıları dahil et (Mevcutsa Türkçe / Orijinal)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- İndirme Başlat Butonu -->
+            <div class="preview-actions">
+              <button id="btnStartDownload" class="btn btn-primary btn-lg">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Hemen İndir</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Aktif İndirmeler Listesi -->
+      <section class="card downloads-section" id="activeDownloadsSection">
+        <div class="card-header">
+          <h3>Aktif İndirmeler</h3>
+          <span class="counter-badge" id="activeJobsCount">0 Görev</span>
+        </div>
+
+        <div id="downloadsList" class="downloads-list">
+          <div class="empty-state" id="emptyDownloadsState">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <p>Şu anda aktif bir indirme yok. Yukarıdan bir bağlantı girip "Hemen İndir" butonuna basın.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Toplu İndirme Katmanı -->
+      <section class="card batch-card">
+        <div class="card-header toggle-header" id="batchHeader">
+          <div class="toggle-title">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            <h3>Toplu İndirme (Çoklu URL)</h3>
+          </div>
+          <span class="accordion-arrow">▼</span>
+        </div>
+
+        <div class="batch-content hidden" id="batchContent">
+          <p class="batch-desc">Her satıra bir adet video bağlantısı yapıştırın:</p>
+          <textarea id="batchUrls" rows="4" placeholder="https://www.youtube.com/watch?v=...&#10;https://www.youtube.com/watch?v=..."></textarea>
+          <div class="batch-actions">
+            <button id="btnStartBatch" class="btn btn-secondary">
+              <span>Tümünü Sırayla İndir</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- SEKME 2: DOSYA DÖNÜŞTÜRÜCÜ -->
+    <main class="tab-content" id="tab-converter">
+      <section class="card converter-card">
+        <div class="card-header">
+          <h2>Yerel Video & Ses Dönüştürücü</h2>
+          <span class="card-hint">Bilgisayarınızdaki video dosyalarını MP4 veya MP3 formatına çevirin</span>
+        </div>
+
+        <!-- Sürükle Bırak Alanı -->
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="localFileInput" accept="video/*,audio/*" style="display:none">
+          <div class="drop-icon">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </div>
+          <h3 id="dropText">Dönüştürülecek Dosyayı Buraya Sürükleyin veya Seçin</h3>
+          <p>Desteklenenler: MKV, AVI, WebM, MOV, MP4, FLV, WMV, MP3, WAV</p>
+          <button type="button" class="btn btn-secondary btn-sm" id="btnSelectLocalFile">Dosya Seç</button>
+        </div>
+
+        <!-- Seçilen Dosya Bilgisi -->
+        <div class="selected-file-info hidden" id="selectedFileInfo">
+          <div class="file-badge">
+            <span class="file-name" id="selectedFileName">video.mkv</span>
+            <span class="file-size" id="selectedFileSize">0 MB</span>
+          </div>
+
+          <div class="conversion-settings">
+            <div class="option-group">
+              <label>Hedef Format:</label>
+              <select id="convTargetFormat" class="form-select">
+                <option value="mp4" selected>🎬 MP4 (H.264 - Tüm Cihazlarla Uyumlu)</option>
+                <option value="mp3">🎵 MP3 (320 kbps Yüksek Kalite Müzik)</option>
+                <option value="wav">🎵 WAV (Kayıpsız Ses)</option>
+                <option value="m4a">🎵 M4A Ses</option>
+              </select>
+            </div>
+
+            <div class="option-group">
+              <label>Kalite / Boyut Optimizasyonu:</label>
+              <select id="convPreset" class="form-select">
+                <option value="high" selected>🌟 Yüksek Kalite (Önerilen)</option>
+                <option value="compress">⚡ Video Boyutunu Küçült (%50 Kompresyon)</option>
+                <option value="1080p">📺 1080p Full HD Ölçeklendir</option>
+                <option value="720p">📱 720p HD Ölçeklendir</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="conv-actions">
+            <button id="btnStartConvert" class="btn btn-primary btn-lg">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+              <span>Dönüştürmeyi Başlat</span>
+            </button>
+          </div>
+
+          <!-- Dönüştürme İlerlemesi -->
+          <div class="conv-progress-container hidden" id="convProgressBox">
+            <div class="progress-bar-wrapper">
+              <div class="progress-bar-fill progress-indeterminate"></div>
+            </div>
+            <p class="conv-status-text" id="convStatusText">Dönüştürülüyor, lütfen bekleyin...</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- SEKME 3: İNDİRİLENLER & GEÇMİŞ -->
+    <main class="tab-content" id="tab-history">
+      <section class="card history-card">
+        <div class="card-header">
+          <div>
+            <h2>İndirilen Dosyalar</h2>
+            <span class="card-hint">Klasördeki tüm video ve ses kayıtlarınız</span>
+          </div>
+          <div class="header-tools">
+            <button id="btnRefreshHistory" class="btn btn-secondary btn-sm" title="Listeyi Yenile">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+              </svg>
+              <span>Yenile</span>
+            </button>
+            <button id="btnOpenDownloadsHistory" class="btn btn-primary btn-sm">
+              <span>Klasörü Aç</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="history-table-container">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Tür</th>
+                <th>Dosya Adı</th>
+                <th>Boyut</th>
+                <th>Tarih</th>
+                <th style="text-align: right;">İşlemler</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <!-- JS ile doldurulacak -->
+            </tbody>
+          </table>
+          <div class="empty-state hidden" id="emptyHistoryState">
+            <p>Henüz indirilmiş bir dosya bulunmuyor.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- SEKME 4: DESTEKLENEN SİTELER -->
+    <main class="tab-content" id="tab-sites">
+      <section class="card sites-card">
+        <div class="card-header">
+          <h2>Desteklenen Popüler Platformlar</h2>
+          <span class="card-hint">Aşağıdaki siteler ve 1000'den fazla diğer siteden indirme yapabilirsiniz</span>
+        </div>
+
+        <div class="sites-grid">
+          <div class="site-card">
+            <div class="site-card-icon yt">▶</div>
+            <h4>YouTube</h4>
+            <p>4K, 2K, 1080p 60fps video, Shorts ve MP3 müzik indirme.</p>
+          </div>
+          <div class="site-card">
+            <div class="site-card-icon ig">📸</div>
+            <h4>Instagram</h4>
+            <p>Reels videoları, gönderi videoları ve hikayeler.</p>
+          </div>
+          <div class="site-card">
+            <div class="site-card-icon tt">🎵</div>
+            <h4>TikTok</h4>
+            <p>Filigransız (Watermark olmadan) HD video indirme.</p>
+          </div>
+          <div class="site-card">
+            <div class="site-card-icon x">𝕏</div>
+            <h4>X (Twitter)</h4>
+            <p>Tweetlerde paylaşılan tüm yüksek çözünürlüklü videolar.</p>
+          </div>
+          <div class="site-card">
+            <div class="site-card-icon fb">👥</div>
+            <h4>Facebook</h4>
+            <p>Facebook videoları ve Reels içerikleri.</p>
+          </div>
+          <div class="site-card">
+            <div class="site-card-icon rd">🔴</div>
+            <h4>Reddit</h4>
+            <p>Reddit video ve ses birleştirmeli indirme.</p>
+          </div>
+          <div class="site-card">
+            <div class="site-card-icon tw">🟣</div>
+            <h4>Twitch</h4>
+            <p>Klipler ve VOD yayın kayıtları.</p>
+          </div>
+          <div class="site-card">
+            <div class="site-card-icon vm">🎬</div>
+            <h4>Vimeo & Dailymotion</h4>
+            <p>Orijinal yüksek kalitede video akışları.</p>
+          </div>
+        </div>
+
+        <div class="guide-box">
+          <h3>💡 İpuçları</h3>
+          <ul>
+            <li><strong>En Yüksek Kalite:</strong> YouTube 1080p ve 4K videoları ayrı ses ve görüntü kanalı olarak yayınlar. Programımız bu iki kanalı FFmpeg motoru sayesinde tek bir kayıpsız MP4 dosyasında birleştirir.</li>
+            <li><strong>Sadece Müzik:</strong> Videolardan müzik veya ses kaydetmek için format seçiminden "MP3 (320 kbps)" seçeneğini işaretlemeniz yeterlidir.</li>
+            <li><strong>Yerel Dosyalar:</strong> Elinizdeki MKV veya WebM gibi açılmayan videoları "Dosya Dönüştürücü" sekmesinden anında MP4 formatına çevirebilirsiniz.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <!-- Alt Bilgi -->
+    <footer class="footer">
+      <p>HD Video İndirici & Dönüştürücü • Gelişmiş Yerel Medya Aracı</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

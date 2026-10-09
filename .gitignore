@@ -1,0 +1,8 @@
+# İndirilen ve geçici medya dosyaları
+downloads/*
+!downloads/.gitkeep
+
+# Günlük ve sistem dosyaları
+*.log
+.DS_Store
+Thumbs.db
