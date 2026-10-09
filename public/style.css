@@ -375,7 +375,7 @@ body {
 
 .input-wrapper input {
   width: 100%;
-  padding: 14px 90px 14px 48px;
+  padding: 14px 180px 14px 48px;
   background: var(--bg-input);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -395,12 +395,34 @@ body {
   color: #64748b;
 }
 
-.input-wrapper #btnPaste {
+.input-actions {
   position: absolute;
   right: 10px;
   display: flex;
   align-items: center;
+  gap: 8px;
+}
+
+.btn-clear {
+  display: inline-flex;
+  align-items: center;
   gap: 4px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-clear:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.5);
 }
 
 /* Hızlı Siteler */

@@ -80,6 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const mainQualityWrapper = document.getElementById("mainQualityWrapper");
   const urlStatusBadge = document.getElementById("urlStatusBadge");
   const urlStatusMessage = document.getElementById("urlStatusMessage");
+  const btnClearUrl = document.getElementById("btnClearUrl");
 
   // Format Değişikliği (Ana Kart)
   document.querySelectorAll('input[name="mainFormatChoice"]').forEach((radio) => {
@@ -113,12 +114,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // 2.1. URL Temizleme Butonu
+  if (btnClearUrl) {
+    btnClearUrl.addEventListener("click", () => {
+      videoUrlInput.value = "";
+      btnClearUrl.classList.add("hidden");
+      if (urlStatusBadge) urlStatusBadge.classList.add("hidden");
+      if (previewCard) previewCard.classList.add("hidden");
+      currentVideoInfo = null;
+      videoUrlInput.focus();
+    });
+  }
+
   // URL girişini anında algıla (Paste, Input, Change)
   let urlDebounceTimer;
   function handleUrlChange() {
     const url = videoUrlInput.value.trim();
+    if (btnClearUrl) {
+      if (url.length > 0) {
+        btnClearUrl.classList.remove("hidden");
+      } else {
+        btnClearUrl.classList.add("hidden");
+      }
+    }
+
     if (!url) {
       if (urlStatusBadge) urlStatusBadge.classList.add("hidden");
+      if (previewCard) previewCard.classList.add("hidden");
+      currentVideoInfo = null;
       return;
     }
 
