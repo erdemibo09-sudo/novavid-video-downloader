@@ -329,6 +329,7 @@ async function handleRequest(req: Request): Promise<Response> {
 
       const args = [
         "--no-check-certificates",
+        "--no-playlist",
         "--newline",
         "--progress-template",
         "download:%(progress._percent_str)s|%(progress._speed_str)s|%(progress._eta_str)s|%(progress._total_bytes_str)s|%(progress._downloaded_bytes_str)s",
@@ -413,10 +414,12 @@ async function handleRequest(req: Request): Promise<Response> {
               } else if (trimmed.includes("[Merger]") || trimmed.includes("Merging formats")) {
                 job.status = "merging";
                 job.percent = 99;
+                job.speed = "Birleştiriliyor...";
                 notifyJob(job);
               } else if (trimmed.includes("[ExtractAudio]") || trimmed.includes("Destination: ")) {
                 if (job.formatType === "mp3" || job.formatType === "wav" || job.formatType === "m4a") {
                   job.status = "extracting";
+                  job.speed = "Ses dönüştürülüyor...";
                   notifyJob(job);
                 }
               } else if (trimmed.startsWith("[download] Destination: ")) {
@@ -432,6 +435,20 @@ async function handleRequest(req: Request): Promise<Response> {
         if (status.success) {
           job.percent = 100;
           job.status = "completed";
+          job.speed = "✓ Tamamlandı";
+          job.eta = "00:00";
+
+          // Çıktı dosyasının gerçek boyutunu tespit et
+          if (job.outputFile) {
+            try {
+              const stat = Deno.statSync(job.outputFile);
+              job.totalBytes = formatBytes(stat.size);
+              job.downloadedBytes = job.totalBytes;
+            } catch {
+              // devam et
+            }
+          }
+
           notifyJob(job);
         } else if (job.status !== "cancelled") {
           const errBytes = await child.stderr.pipeThrough(new TextDecoderStream()).getReader().read();

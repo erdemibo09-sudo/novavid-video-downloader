@@ -418,6 +418,9 @@ document.addEventListener("DOMContentLoaded", () => {
             statusEl.style.color = "#10b981";
             if (barEl) barEl.style.width = "100%";
             if (percentEl) percentEl.textContent = "%100";
+            if (speedEl) speedEl.textContent = "✓ Hazır";
+            if (etaEl) etaEl.textContent = "";
+            if (sizeEl) sizeEl.textContent = `💾 ${job.totalBytes || "Tamamlandı"}`;
 
             if (actionsEl) {
               actionsEl.innerHTML = `
@@ -437,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
             activeDownloads.delete(jobId);
             updateActiveCount();
           } else if (job.status === "error") {
-            statusEl.textContent = "Hata oluştu";
+            statusEl.textContent = "Hata: " + (job.error ? job.error.slice(0, 100) : "İndirme başarısız");
             statusEl.style.color = "#ef4444";
             eventSource.close();
             activeDownloads.delete(jobId);
