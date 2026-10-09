@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (urlStatusBadge && urlStatusMessage) {
       urlStatusBadge.classList.remove("hidden");
-      urlStatusMessage.textContent = "🔍 Video bilgileri YouTube / siteden çekiliyor...";
+      urlStatusMessage.textContent = "🔍 Video bilgileri alınıyor...";
     }
 
     try {

@@ -503,7 +503,7 @@ async function handleRequest(req: Request): Promise<Response> {
           job.status = "error";
           const rawErr = (errBytes.value || "").trim();
           if (rawErr.includes("Sign in to confirm you're not a bot")) {
-            job.error = "YouTube bot doğrulaması istedi. Lütfen birkaç dakika bekleyin veya farklı bir video deneyin.";
+            job.error = "Site bot doğrulaması istedi. Lütfen birkaç dakika bekleyin veya farklı bir video deneyin.";
           } else {
             const errorLines = rawErr.split("\n").filter(l => l.includes("ERROR:") || (!l.includes("WARNING:") && l.trim()));
             job.error = errorLines.pop() || rawErr || "İndirme sırasında bir hata oluştu";

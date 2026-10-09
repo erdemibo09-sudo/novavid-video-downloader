@@ -1,6 +1,6 @@
 # ⚡ NovaVid — Ultra HD Video İndirici & Dönüştürücü
 
-YouTube, Instagram, TikTok, Twitter/X, Facebook, Twitch ve 1700'den fazla internet sitesinden en yüksek kalitede (4K, 2K, 1080p Full HD) video ve ses indirme, dönüştürme uygulaması.
+İnternetteki 1.700'den fazla video ve medya platformundan en yüksek kalitede (4K, 2K, 1080p Full HD) video ve ses indirme, dönüştürme uygulaması.
 
 ---
 
@@ -11,7 +11,7 @@ YouTube, Instagram, TikTok, Twitter/X, Facebook, Twitch ve 1700'den fazla intern
 - **Yerel Dosya Dönüştürücü:** Bilgisayarınızdaki MKV, WebM, AVI, MOV, FLV videolarını her cihazda sorunsuz açılan MP4 formatına dönüştürme ve dosya boyutunu küçültme (kompresyon).
 - **Toplu İndirme (Batch Download):** Birden fazla linki alt alta yapıştırıp tek tıkla arka arkaya indirme imkanı.
 - **Canlı İlerleme Takibi:** Yüzde, anlık indirme hızı (MB/s), kalan süre (ETA) ve indirilen dosya boyutu.
-- **Gelişmiş Bot Koruması Bypass:** YouTube ve diğer sitelerin bot kontrollerini aşmak için entegre Deno JS motoru ve otomatik tarayıcı doğrulaması.
+- **Gelişmiş Bot Koruması:** Web sitelerinin bot kontrollerini aşmak için entegre Deno JS motoru ve otomatik tarayıcı doğrulaması.
 - **Masaüstü Uygulaması Deneyimi:** Tarayıcı çubuğu olmadan tam bir masaüstü yazılımı penceresinde çalışır.
 - **Hızlı Klasör Erişimi:** İndirilen dosyalara tek tıkla "Klasörde Göster" ve "Oynat" seçenekleri.
 
@@ -37,9 +37,9 @@ klasörüne kaydedilir. Arayüzün sağ üstündeki **"İndirilenler Klasörü"*
 
 ---
 
-## 🛠️ Desteklenen Siteler ve Formatlar
+## 🛠️ Desteklenen Formatlar
 
-- **Video Siteleri:** YouTube, Instagram (Reels & Post), TikTok (filigransız), Twitter/X, Reddit, Facebook, Vimeo, Dailymotion, Twitch ve 1.700+ web sitesi.
+- **Desteklenen Platformlar:** 1.700'den fazla açık video, sosyal medya ve canlı yayın platformu.
 - **Video Formatları:** MP4 (H.264 / AAC - Evrensel uyumluluk), WebM, MKV
 - **Ses Formatları:** MP3 (320 kbps Yüksek Kalite), WAV (Kayıpsız Stüdyo), M4A / AAC
 - **Çözünürlükler:** 4K (2160p), 2K (1440p), 1080p, 720p, 480p, 360p
