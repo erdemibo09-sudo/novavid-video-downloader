@@ -644,10 +644,20 @@ async function handleRequest(req: Request): Promise<Response> {
       const filePath = body.filePath;
 
       if (filePath) {
-        new Deno.Command("explorer.exe", { args: ["/select,", filePath] }).spawn();
-      } else {
-        new Deno.Command("explorer.exe", { args: [DOWNLOADS_DIR] }).spawn();
+        try {
+          const stat = Deno.statSync(filePath);
+          if (stat.isFile) {
+            new Deno.Command("explorer.exe", { args: [`/select,${filePath}`] }).spawn();
+            return new Response(JSON.stringify({ success: true }), {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+        } catch {
+          // dosya tam yolu bulunamadıysa doğrudan downloads klasörünü aç
+        }
       }
+
+      new Deno.Command("explorer.exe", { args: [DOWNLOADS_DIR] }).spawn();
 
       return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
