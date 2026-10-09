@@ -109,7 +109,36 @@ function findExecutablePaths() {
   return { ytDlpPath, ffmpegPath, ffmpegBinDir, denoPath, denoDir };
 }
 
+function detectCookieBrowser(): string | null {
+  try {
+    const appData = Deno.env.get("APPDATA") || "";
+    if (appData) {
+      const ffProfilesDir = `${appData}\\Mozilla\\Firefox\\Profiles`;
+      try {
+        for (const entry of Deno.readDirSync(ffProfilesDir)) {
+          if (entry.isDirectory) {
+            const cookieFile = `${ffProfilesDir}\\${entry.name}\\cookies.sqlite`;
+            try {
+              if (Deno.statSync(cookieFile).isFile) {
+                return "firefox";
+              }
+            } catch {
+              // devam
+            }
+          }
+        }
+      } catch {
+        // devam
+      }
+    }
+  } catch {
+    // devam
+  }
+  return null;
+}
+
 const { ytDlpPath, ffmpegPath, ffmpegBinDir, denoPath, denoDir } = findExecutablePaths();
+const cookieBrowser = detectCookieBrowser();
 
 const sysPath = Deno.env.get("PATH") || "";
 const augmentedPath = [denoDir, ffmpegBinDir, sysPath].filter(Boolean).join(";");
@@ -121,6 +150,7 @@ console.log(`📁 İndirilenler: ${DOWNLOADS_DIR}`);
 console.log(`⚡ yt-dlp: ${ytDlpPath}`);
 console.log(`🎬 ffmpeg: ${ffmpegPath}`);
 console.log(`🦕 deno: ${denoPath}`);
+console.log(`🍪 Tarayıcı Doğrulaması: ${cookieBrowser ? cookieBrowser : "Yok"}`);
 console.log("=========================================");
 
 // İndirilenler klasörünü oluştur
@@ -246,6 +276,9 @@ async function handleRequest(req: Request): Promise<Response> {
       if (ffmpegBinDir) {
         args.push("--ffmpeg-location", ffmpegBinDir);
       }
+      if (cookieBrowser) {
+        args.push("--cookies-from-browser", cookieBrowser);
+      }
       args.push(videoUrl);
 
       const cmd = new Deno.Command(ytDlpPath, {
@@ -347,6 +380,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (ffmpegBinDir) {
         args.push("--ffmpeg-location", ffmpegBinDir);
+      }
+
+      if (cookieBrowser) {
+        args.push("--cookies-from-browser", cookieBrowser);
       }
 
       args.push("-o", `${DOWNLOADS_DIR}\\%(title).180B [%(id)s].%(ext)s`);
