@@ -103,10 +103,16 @@ function findExecutablePaths() {
     }
   }
 
-  return { ytDlpPath, ffmpegPath, ffmpegBinDir };
+  const denoPath = Deno.execPath();
+  const denoDir = denoPath.substring(0, denoPath.lastIndexOf("\\"));
+
+  return { ytDlpPath, ffmpegPath, ffmpegBinDir, denoPath, denoDir };
 }
 
-const { ytDlpPath, ffmpegPath, ffmpegBinDir } = findExecutablePaths();
+const { ytDlpPath, ffmpegPath, ffmpegBinDir, denoPath, denoDir } = findExecutablePaths();
+
+const sysPath = Deno.env.get("PATH") || "";
+const augmentedPath = [denoDir, ffmpegBinDir, sysPath].filter(Boolean).join(";");
 
 console.log("=========================================");
 console.log("🚀 HD Video İndirici & Dönüştürücü Başlatıldı");
@@ -114,6 +120,7 @@ console.log(`🌐 Web Arayüzü: http://localhost:${PORT}`);
 console.log(`📁 İndirilenler: ${DOWNLOADS_DIR}`);
 console.log(`⚡ yt-dlp: ${ytDlpPath}`);
 console.log(`🎬 ffmpeg: ${ffmpegPath}`);
+console.log(`🦕 deno: ${denoPath}`);
 console.log("=========================================");
 
 // İndirilenler klasörünü oluştur
@@ -234,6 +241,7 @@ async function handleRequest(req: Request): Promise<Response> {
         "--dump-single-json",
         "--no-playlist",
         "--skip-download",
+        "--js-runtimes", `deno:${denoPath}`,
       ];
       if (ffmpegBinDir) {
         args.push("--ffmpeg-location", ffmpegBinDir);
@@ -242,6 +250,7 @@ async function handleRequest(req: Request): Promise<Response> {
 
       const cmd = new Deno.Command(ytDlpPath, {
         args,
+        env: { PATH: augmentedPath },
         stdout: "piped",
         stderr: "piped",
       });
@@ -330,6 +339,7 @@ async function handleRequest(req: Request): Promise<Response> {
       const args = [
         "--no-check-certificates",
         "--no-playlist",
+        "--js-runtimes", `deno:${denoPath}`,
         "--newline",
         "--progress-template",
         "download:%(progress._percent_str)s|%(progress._speed_str)s|%(progress._eta_str)s|%(progress._total_bytes_str)s|%(progress._downloaded_bytes_str)s",
@@ -373,6 +383,7 @@ async function handleRequest(req: Request): Promise<Response> {
 
       const cmd = new Deno.Command(ytDlpPath, {
         args,
+        env: { PATH: augmentedPath },
         stdout: "piped",
         stderr: "piped",
       });
@@ -453,7 +464,13 @@ async function handleRequest(req: Request): Promise<Response> {
         } else if (job.status !== "cancelled") {
           const errBytes = await child.stderr.pipeThrough(new TextDecoderStream()).getReader().read();
           job.status = "error";
-          job.error = errBytes.value || "İndirme sırasında bir hata oluştu";
+          const rawErr = (errBytes.value || "").trim();
+          if (rawErr.includes("Sign in to confirm you're not a bot")) {
+            job.error = "YouTube bot doğrulaması istedi. Lütfen birkaç dakika bekleyin veya farklı bir video deneyin.";
+          } else {
+            const errorLines = rawErr.split("\n").filter(l => l.includes("ERROR:") || (!l.includes("WARNING:") && l.trim()));
+            job.error = errorLines.pop() || rawErr || "İndirme sırasında bir hata oluştu";
+          }
           notifyJob(job);
         }
       })();
