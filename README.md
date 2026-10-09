@@ -80,3 +80,21 @@ graph LR
 
 ## 📄 License
 This project is open-source under the [MIT License](LICENSE).
+
+---
+
+## ⚖️ Legal Disclaimer / Yasal Sorumluluk Reddi
+
+### 🇬🇧 English
+> **Disclaimer:** NovaVid is an open-source software suite developed strictly for educational, research, and personal media archiving (fair use) purposes.
+> - This software does **not** bypass digital rights management (DRM) protections.
+> - The developers and contributors do **not** host, store, stream, or distribute any copyrighted media files.
+> - Users are solely responsible for ensuring that their download and conversion activities comply with applicable local laws, intellectual property rights, and the terms of service of the respective platforms.
+> - The authors and maintainers assume no liability for misuse, copyright infringement, or unauthorized distribution of third-party content.
+
+### 🇹🇷 Türkçe
+> **Yasal Sorumluluk Reddi:** NovaVid, yalnızca eğitim, araştırma ve kişisel medya arşivleme (adil kullanım / fair use) amacıyla geliştirilmiş açık kaynaklı bir yardımcı yazılımdır.
+> - Bu yazılım dijital hak yönetimi (DRM) veya şifreli kopya koruma sistemlerini **aşmaz**.
+> - Geliştiriciler hiçbir telifli medya içeriğini barındırmaz, sunmaz veya dağıtmaz.
+> - Yazılımın kullanımı sırasında yerel telif hakkı yasalarına, fikri mülkiyet haklarına ve ilgili platformların kullanım şartlarına uyulması tamamen son kullanıcının sorumluluğundadır.
+> - Bu yazılımın hukuka aykırı şekilde veya telif haklarını ihlal edecek biçimde kullanılmasından geliştiriciler sorumlu tutulamaz.

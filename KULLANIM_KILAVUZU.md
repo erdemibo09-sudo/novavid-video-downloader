@@ -45,3 +45,13 @@ klasörüne kaydedilir. Arayüzün sağ üstündeki **"İndirilenler Klasörü"*
   - **Ses & Müzik:** MP3 (320 kbps Stüdyo), M4A / AAC (Orijinal Ultra Hızlı), FLAC (Kayıpsız Odyofil), WAV (Ham Stüdyo), OPUS (Yüksek Verimli)
   - **Animasyon:** GIF (Hareketli Resim Dönüştürücü)
 - **Çözünürlükler:** 4K (2160p), 2K (1440p), 1080p Full HD, 720p HD, 480p, 360p
+
+---
+
+## ⚖️ Yasal Sorumluluk Reddi (Legal Disclaimer)
+
+> **Önemli Bilgilendirme:** NovaVid, yalnızca eğitim, araştırma, ders içeriklerini çevrimdışı izleme ve kişisel medya arşivleme (adil kullanım / fair-use) amacıyla geliştirilmiş açık kaynaklı bir araçtır.
+> - Bu yazılım hiçbir dijital hak yönetimi (DRM) veya şifreli kopya koruma teknolojisini aşmaz.
+> - Yazılım ve geliştiricileri hiçbir telifli medya içeriğini sunucularında barındırmaz, depolamaz veya yayınlamaz.
+> - İndirilen ve dönüştürülen materyallerin kullanımında ilgili platformların kullanım koşullarına ve yerel telif hakkı mevzuatına uyulması son kullanıcının sorumluluğundadır.
+> - Yazılımın amacı dışında veya telif haklarını ihlal edecek şekilde kullanımından geliştiriciler sorumlu tutulamaz.
