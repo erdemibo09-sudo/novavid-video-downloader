@@ -362,6 +362,18 @@ async function handleRequest(req: Request): Promise<Response> {
         });
       }
 
+      // Zaten devam eden aynı URL'e ait indirme varsa mükerrer işlem başlatma
+      for (const [existingId, existingJob] of jobs) {
+        if (
+          existingJob.url === videoUrl &&
+          (existingJob.status === "starting" || existingJob.status === "downloading" || existingJob.status === "merging")
+        ) {
+          return new Response(JSON.stringify({ jobId: existingId, message: "İndirme zaten sürüyor" }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      }
+
       const jobId = "dl_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7);
 
       const job: ActiveJob = {
@@ -388,7 +400,7 @@ async function handleRequest(req: Request): Promise<Response> {
         "--js-runtimes", `deno:${denoPath}`,
         "--newline",
         "--progress-template",
-        "download:%(progress._percent_str)s|%(progress._speed_str)s|%(progress._eta_str)s|%(progress._total_bytes_str)s|%(progress._downloaded_bytes_str)s",
+        "download:NOVAPROG:%(progress._percent_str)s|%(progress._speed_str)s|%(progress._eta_str)s|%(progress._total_bytes_str)s|%(progress._downloaded_bytes_str)s",
       ];
 
       if (ffmpegBinDir) {
@@ -464,6 +476,22 @@ async function handleRequest(req: Request): Promise<Response> {
       notifyJob(job);
 
       (async () => {
+        let stderrAccumulated = "";
+
+        // stderr akışını eşzamanlı tüket (Windows pipe tamponunun 4KB'ta tıkanıp işlemi dondurmasını önler)
+        const drainStderr = (async () => {
+          try {
+            const errReader = child.stderr.pipeThrough(new TextDecoderStream()).getReader();
+            while (true) {
+              const { done, value } = await errReader.read();
+              if (done) break;
+              stderrAccumulated += value;
+            }
+          } catch {
+            // gözardı et
+          }
+        })();
+
         const reader = child.stdout.pipeThrough(new TextDecoderStream()).getReader();
         let buffer = "";
 
@@ -477,8 +505,8 @@ async function handleRequest(req: Request): Promise<Response> {
 
             for (const line of lines) {
               const trimmed = line.trim();
-              if (trimmed.startsWith("download:")) {
-                const parts = trimmed.substring("download:".length).split("|");
+              if (trimmed.startsWith("NOVAPROG:")) {
+                const parts = trimmed.substring("NOVAPROG:".length).split("|");
                 if (parts.length >= 5) {
                   const rawPercent = parts[0].trim().replace("%", "");
                   const pNum = parseFloat(rawPercent);
@@ -526,6 +554,8 @@ async function handleRequest(req: Request): Promise<Response> {
         }
 
         const status = await child.status;
+        await drainStderr;
+
         if (status.success) {
           job.percent = 100;
           job.status = "completed";
@@ -590,9 +620,8 @@ async function handleRequest(req: Request): Promise<Response> {
 
           notifyJob(job);
         } else if (job.status !== "cancelled") {
-          const errBytes = await child.stderr.pipeThrough(new TextDecoderStream()).getReader().read();
           job.status = "error";
-          const rawErr = (errBytes.value || "").trim();
+          const rawErr = stderrAccumulated.trim();
           if (rawErr.includes("Sign in to confirm you're not a bot")) {
             job.error = "Site bot doğrulaması istedi. Lütfen birkaç dakika bekleyin veya farklı bir video deneyin.";
           } else {
