@@ -1,4 +1,4 @@
-// HD Video İndirici ve Dönüştürücü - Backend Sunucusu (Deno - Sıfır Dış Bağımlılık)
+// NovaVid - Ultra HD Video Downloader & Converter (Deno Backend - Zero Dependencies)
 
 const PORT = 3000;
 const ROOT_DIR = Deno.cwd();
@@ -144,13 +144,13 @@ const sysPath = Deno.env.get("PATH") || "";
 const augmentedPath = [denoDir, ffmpegBinDir, sysPath].filter(Boolean).join(";");
 
 console.log("=========================================");
-console.log("🚀 HD Video İndirici & Dönüştürücü Başlatıldı");
-console.log(`🌐 Web Arayüzü: http://localhost:${PORT}`);
-console.log(`📁 İndirilenler: ${DOWNLOADS_DIR}`);
+console.log("🚀 NovaVid - Ultra HD Video Downloader & Converter");
+console.log(`🌐 Web UI: http://localhost:${PORT}`);
+console.log(`📁 Downloads: ${DOWNLOADS_DIR}`);
 console.log(`⚡ yt-dlp: ${ytDlpPath}`);
 console.log(`🎬 ffmpeg: ${ffmpegPath}`);
 console.log(`🦕 deno: ${denoPath}`);
-console.log(`🍪 Tarayıcı Doğrulaması: ${cookieBrowser ? cookieBrowser : "Yok"}`);
+console.log(`🍪 Browser Auth: ${cookieBrowser ? cookieBrowser : "None"}`);
 console.log("=========================================");
 
 // İndirilenler klasörünü oluştur
