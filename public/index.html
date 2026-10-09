@@ -544,6 +544,25 @@
     </footer>
   </div>
 
+  <!-- Dahili Medya Oynatıcı Modalı -->
+  <div id="mediaModal" class="media-modal hidden">
+    <div class="media-modal-backdrop" id="mediaModalBackdrop"></div>
+    <div class="media-modal-card">
+      <div class="media-modal-header">
+        <h3 id="mediaModalTitle">Video Oynatıcı</h3>
+        <button id="btnCloseMediaModal" class="btn-close-modal" type="button" title="Kapat">✕</button>
+      </div>
+      <div class="media-modal-body">
+        <video id="inAppVideoPlayer" controls playsinline></video>
+      </div>
+      <div class="media-modal-footer">
+        <button id="btnOpenInSystemPlayer" class="btn btn-secondary btn-sm" type="button">🖥️ Masaüstü Oynatıcıda Aç</button>
+        <button id="btnOpenInExplorerModal" class="btn btn-secondary btn-sm" type="button">📁 Klasörde Göster</button>
+        <a id="btnDownloadDirect" class="btn btn-primary btn-sm" href="#" download>💾 Dosyayı Kaydet</a>
+      </div>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>

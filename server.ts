@@ -734,26 +734,25 @@ async function handleRequest(req: Request): Promise<Response> {
       const body = await req.json().catch(() => ({}));
       const filePath = body.filePath;
 
+      let psScript = "";
       if (filePath) {
-        try {
-          if (Deno.statSync(filePath).isFile) {
-            new Deno.Command("explorer.exe", {
-              args: [`/select,${filePath}`],
-            }).spawn();
-            return new Response(JSON.stringify({ success: true, target: filePath }), {
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-            });
+        psScript = `
+          $p = '${filePath.replace(/'/g, "''")}';
+          if (Test-Path -LiteralPath $p) {
+            & explorer.exe /select,$p
+          } else {
+            (New-Object -ComObject Shell.Application).Explore('${DOWNLOADS_DIR.replace(/'/g, "''")}')
           }
-        } catch {
-          // dosya bulunamadıysa downloads klasörünü aç
-        }
+        `;
+      } else {
+        psScript = `(New-Object -ComObject Shell.Application).Explore('${DOWNLOADS_DIR.replace(/'/g, "''")}')`;
       }
 
-      new Deno.Command("explorer.exe", {
-        args: [DOWNLOADS_DIR],
+      new Deno.Command("powershell.exe", {
+        args: ["-NoProfile", "-NonInteractive", "-Command", psScript],
       }).spawn();
 
-      return new Response(JSON.stringify({ success: true, target: DOWNLOADS_DIR }), {
+      return new Response(JSON.stringify({ success: true, target: filePath || DOWNLOADS_DIR }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     } catch (e: any) {
@@ -770,21 +769,19 @@ async function handleRequest(req: Request): Promise<Response> {
       const body = await req.json().catch(() => ({}));
       const filePath = body.filePath;
       if (filePath) {
-        try {
-          if (Deno.statSync(filePath).isFile) {
-            new Deno.Command("cmd.exe", {
-              args: ["/c", "start", '""', filePath],
-            }).spawn();
-            return new Response(JSON.stringify({ success: true }), {
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-            });
+        const psScript = `
+          $p = '${filePath.replace(/'/g, "''")}';
+          if (Test-Path -LiteralPath $p) {
+            (New-Object -ComObject Shell.Application).ShellExecute($p)
           }
-        } catch {
-          return new Response(
-            JSON.stringify({ error: "Dosya bulunamadı. Başka bir klasöre taşınmış veya silinmiş olabilir." }),
-            { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
+        `;
+        new Deno.Command("powershell.exe", {
+          args: ["-NoProfile", "-NonInteractive", "-Command", psScript],
+        }).spawn();
+
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
       return new Response(JSON.stringify({ error: "Dosya yolu gerekli veya dosya henüz hazır değil." }), {
         status: 400,
@@ -795,6 +792,38 @@ async function handleRequest(req: Request): Promise<Response> {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+  }
+
+  // 8.1. Medya Dosyası Oynatma / Akışı (GET /api/media?path=...)
+  if (url.pathname === "/api/media" && req.method === "GET") {
+    const rawPath = url.searchParams.get("path") || "";
+    let safePath = rawPath;
+    if (!safePath.includes(":\\") && !safePath.startsWith("\\\\")) {
+      safePath = `${DOWNLOADS_DIR}\\${safePath.replace(/^[/\\]+/, "")}`;
+    }
+
+    try {
+      const fileInfo = await Deno.stat(safePath);
+      if (!fileInfo.isFile) {
+        return new Response("Dosya bulunamadı", { status: 404 });
+      }
+
+      const ext = safePath.substring(safePath.lastIndexOf(".")).toLowerCase();
+      const contentType = MIME_TYPES[ext] || "video/mp4";
+      const fileSize = fileInfo.size;
+      const file = await Deno.open(safePath, { read: true });
+
+      return new Response(file.readable, {
+        headers: {
+          "Content-Length": fileSize.toString(),
+          "Content-Type": contentType,
+          "Accept-Ranges": "bytes",
+          ...corsHeaders,
+        },
+      });
+    } catch {
+      return new Response("Dosya açılamadı", { status: 404 });
     }
   }
 

@@ -455,7 +455,7 @@ document.addEventListener("DOMContentLoaded", () => {
               const btnF = actionsEl.querySelector(".btn-card-folder");
               const btnP = actionsEl.querySelector(".btn-card-play");
               if (btnF) btnF.addEventListener("click", () => openFileInFolder(job.outputFile || ""));
-              if (btnP) btnP.addEventListener("click", () => playFile(job.outputFile || ""));
+              if (btnP) btnP.addEventListener("click", () => playFile(job.outputFile || "", job.title || ""));
             }
 
             eventSource.close();
@@ -655,7 +655,7 @@ document.addEventListener("DOMContentLoaded", () => {
           btnRowFolder.addEventListener("click", () => openFileInFolder(f.path));
         }
         if (btnRowPlay) {
-          btnRowPlay.addEventListener("click", () => playFile(f.path));
+          btnRowPlay.addEventListener("click", () => playFile(f.path, f.name));
         }
 
         historyTableBody.appendChild(tr);
@@ -667,7 +667,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
   btnRefreshHistory.addEventListener("click", loadHistory);
 
-  // 11. Klasör Açma İşlemleri
+  // 11. Medya Oynatıcı Modalı
+  const mediaModal = document.getElementById("mediaModal");
+  const mediaModalBackdrop = document.getElementById("mediaModalBackdrop");
+  const btnCloseMediaModal = document.getElementById("btnCloseMediaModal");
+  const inAppVideoPlayer = document.getElementById("inAppVideoPlayer");
+  const mediaModalTitle = document.getElementById("mediaModalTitle");
+  const btnOpenInSystemPlayer = document.getElementById("btnOpenInSystemPlayer");
+  const btnOpenInExplorerModal = document.getElementById("btnOpenInExplorerModal");
+  const btnDownloadDirect = document.getElementById("btnDownloadDirect");
+
+  let currentPlayingPath = "";
+
+  function closeMediaPlayer() {
+    if (mediaModal) mediaModal.classList.add("hidden");
+    if (inAppVideoPlayer) {
+      inAppVideoPlayer.pause();
+      inAppVideoPlayer.removeAttribute("src");
+      inAppVideoPlayer.load();
+    }
+    currentPlayingPath = "";
+  }
+
+  if (btnCloseMediaModal) btnCloseMediaModal.addEventListener("click", closeMediaPlayer);
+  if (mediaModalBackdrop) mediaModalBackdrop.addEventListener("click", closeMediaPlayer);
+
+  if (btnOpenInSystemPlayer) {
+    btnOpenInSystemPlayer.addEventListener("click", () => {
+      if (currentPlayingPath) {
+        fetch("/api/play-file", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ filePath: currentPlayingPath }),
+        });
+      }
+    });
+  }
+
+  if (btnOpenInExplorerModal) {
+    btnOpenInExplorerModal.addEventListener("click", () => {
+      if (currentPlayingPath) {
+        openFileInFolder(currentPlayingPath);
+      }
+    });
+  }
+
+  // 12. Klasör Açma İşlemleri
   function triggerOpenFolder(filePath = "") {
     fetch("/api/open-folder", {
       method: "POST",
@@ -715,26 +760,39 @@ function openFileInFolder(filePath) {
     .catch((err) => console.error("Klasör açılamadı:", err));
 }
 
-function playFile(filePath) {
+function playFile(filePath, fileName = "") {
   if (!filePath) {
     alert("Dosya yolu bulunamadı. Dosya henüz indirilmemiş veya başka bir klasöre taşınmış olabilir.");
     return;
   }
+
+  // 1. Masaüstü varsayılan oynatıcıyı (VLC, Media Player) tetikle
   fetch("/api/play-file", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ filePath }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (!data.success) {
-        alert("Dosya oynatılamadı: " + (data.error || "Dosya bulunamadı veya taşınmış olabilir."));
-      }
-    })
-    .catch((err) => {
-      console.error("Dosya oynatılamadı:", err);
-      alert("Oynatıcı başlatılırken hata oluştu.");
-    });
+  }).catch((err) => console.error("Masaüstü oynatıcı başlatılamadı:", err));
+
+  // 2. Sayfa içi modern video oynatıcıyı anında aç
+  const mediaModal = document.getElementById("mediaModal");
+  const inAppVideoPlayer = document.getElementById("inAppVideoPlayer");
+  const mediaModalTitle = document.getElementById("mediaModalTitle");
+  const btnDownloadDirect = document.getElementById("btnDownloadDirect");
+
+  if (mediaModal && inAppVideoPlayer) {
+    const cleanName = fileName || filePath.split("\\").pop().split("/").pop();
+    const streamUrl = `/api/media?path=${encodeURIComponent(filePath)}`;
+
+    if (mediaModalTitle) mediaModalTitle.textContent = cleanName;
+    if (btnDownloadDirect) {
+      btnDownloadDirect.href = streamUrl;
+      btnDownloadDirect.setAttribute("download", cleanName);
+    }
+
+    inAppVideoPlayer.src = streamUrl;
+    mediaModal.classList.remove("hidden");
+    inAppVideoPlayer.play().catch(() => {});
+  }
 }
 
 function formatBytes(bytes) {
