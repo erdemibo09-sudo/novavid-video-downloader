@@ -552,7 +552,7 @@ async function handleRequest(req: Request): Promise<Response> {
               let newestPath = "";
               let newestMtime = 0;
               for (const entry of Deno.readDirSync(DOWNLOADS_DIR)) {
-                if (entry.isFile && !entry.name.endsWith(".part") && !entry.name.endsWith(".ytdl") && entry.name !== ".gitkeep") {
+                if (entry.isFile && !entry.name.endsWith(".part") && !entry.name.endsWith(".ytdl") && !/\.f\d+\.[a-z0-9]+$/i.test(entry.name) && entry.name !== ".gitkeep") {
                   const p = `${DOWNLOADS_DIR}\\${entry.name}`;
                   try {
                     const s = Deno.statSync(p);
@@ -668,9 +668,22 @@ async function handleRequest(req: Request): Promise<Response> {
     if (job) {
       try {
         if (job.process) {
-          job.process.kill();
+          const pid = job.process.pid;
+          try {
+            job.process.kill();
+          } catch {}
+          try {
+            // Windows'ta alt işlem ağacını (tree) zorla sonlandırarak .part kilitlerini anında çöz
+            const killCmd = new Deno.Command("taskkill", {
+              args: ["/F", "/T", "/PID", pid.toString()],
+              stdout: "null",
+              stderr: "null",
+            });
+            await killCmd.output();
+          } catch {}
         }
         job.status = "cancelled";
+        job.speed = "İptal edildi";
         notifyJob(job);
       } catch {
         // gözardı et
@@ -690,7 +703,7 @@ async function handleRequest(req: Request): Promise<Response> {
     try {
       const files: any[] = [];
       for (const entry of Deno.readDirSync(DOWNLOADS_DIR)) {
-        if (entry.isFile && !entry.name.endsWith(".part") && !entry.name.endsWith(".ytdl") && entry.name !== ".gitkeep") {
+        if (entry.isFile && !entry.name.endsWith(".part") && !entry.name.endsWith(".ytdl") && !/\.f\d+\.[a-z0-9]+$/i.test(entry.name) && entry.name !== ".gitkeep") {
           const fullPath = `${DOWNLOADS_DIR}\\${entry.name}`;
           try {
             const stat = Deno.statSync(fullPath);
@@ -739,17 +752,19 @@ async function handleRequest(req: Request): Promise<Response> {
         psScript = `
           $p = '${filePath.replace(/'/g, "''")}';
           if (Test-Path -LiteralPath $p) {
-            & explorer.exe /select,$p
+            Start-Process -FilePath "explorer.exe" -ArgumentList "/select,\`"$p\`""
           } else {
-            (New-Object -ComObject Shell.Application).Explore('${DOWNLOADS_DIR.replace(/'/g, "''")}')
+            Start-Process -FilePath "explorer.exe" -ArgumentList "\`"${DOWNLOADS_DIR.replace(/'/g, "''")}\`""
           }
         `;
       } else {
-        psScript = `(New-Object -ComObject Shell.Application).Explore('${DOWNLOADS_DIR.replace(/'/g, "''")}')`;
+        psScript = `Start-Process -FilePath "explorer.exe" -ArgumentList "\`"${DOWNLOADS_DIR.replace(/'/g, "''")}\`""`;
       }
 
       new Deno.Command("powershell.exe", {
         args: ["-NoProfile", "-NonInteractive", "-Command", psScript],
+        stdout: "null",
+        stderr: "null",
       }).spawn();
 
       return new Response(JSON.stringify({ success: true, target: filePath || DOWNLOADS_DIR }), {
@@ -772,11 +787,13 @@ async function handleRequest(req: Request): Promise<Response> {
         const psScript = `
           $p = '${filePath.replace(/'/g, "''")}';
           if (Test-Path -LiteralPath $p) {
-            (New-Object -ComObject Shell.Application).ShellExecute($p)
+            Start-Process -FilePath $p
           }
         `;
         new Deno.Command("powershell.exe", {
           args: ["-NoProfile", "-NonInteractive", "-Command", psScript],
+          stdout: "null",
+          stderr: "null",
         }).spawn();
 
         return new Response(JSON.stringify({ success: true }), {
