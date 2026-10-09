@@ -86,7 +86,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll('input[name="mainFormatChoice"]').forEach((radio) => {
     radio.addEventListener("change", (e) => {
       const val = e.target.value;
-      if (val === "mp3" || val === "wav" || val === "m4a") {
+      const isAudio = ["mp3", "wav", "m4a", "flac", "opus"].includes(val);
+      if (isAudio) {
         if (mainQualityWrapper) mainQualityWrapper.classList.add("hidden");
       } else {
         if (mainQualityWrapper) mainQualityWrapper.classList.remove("hidden");
@@ -199,11 +200,12 @@ document.addEventListener("DOMContentLoaded", () => {
     triggerFetchInfo(false);
   });
 
-  // 3. Format Değişikliği (MP4 vs MP3 vs WAV - Önizleme Kartı)
+  // 3. Format Değişikliği (Video vs Ses - Önizleme Kartı)
   document.querySelectorAll('input[name="formatChoice"]').forEach((radio) => {
     radio.addEventListener("change", (e) => {
       const val = e.target.value;
-      if (val === "mp3" || val === "wav" || val === "m4a") {
+      const isAudio = ["mp3", "wav", "m4a", "flac", "opus"].includes(val);
+      if (isAudio) {
         resolutionGroup.classList.add("hidden");
         subsGroup.classList.add("hidden");
       } else {
@@ -566,6 +568,15 @@ document.addEventListener("DOMContentLoaded", () => {
     selectedFileSize.textContent = formatBytes(file.size);
     selectedFileInfo.classList.remove("hidden");
     convProgressBox.classList.add("hidden");
+  }
+
+  if (convTargetFormat) {
+    convTargetFormat.addEventListener("change", (e) => {
+      const isAudioOrGif = ["mp3", "wav", "m4a", "flac", "opus", "gif"].includes(e.target.value);
+      if (convPreset && convPreset.parentElement) {
+        convPreset.parentElement.style.display = isAudioOrGif ? "none" : "block";
+      }
+    });
   }
 
   btnStartConvert.addEventListener("click", async () => {

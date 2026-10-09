@@ -328,7 +328,15 @@ body {
 
 .chip-group {
   display: flex;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.chip-group .chip {
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 6px;
 }
 
 .form-select-sm {

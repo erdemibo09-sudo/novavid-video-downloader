@@ -19,11 +19,11 @@
 
 ## ✨ Key Features
 
-- **🎬 Ultra HD & 4K Downloads:** Download up to 4K (2160p), 2K (1440p), 1080p Full HD at 60fps with automatic lossless FFmpeg audio/video muxing.
-- **🎵 Studio Audio Extraction:** One-click conversion to MP3 (320 kbps), lossless WAV, and AAC/M4A.
+- **🎬 Ultra HD & Multi-Format Video Downloads:** Download up to 4K (2160p), 2K (1440p), 1080p Full HD at 60fps in MP4, MKV, and WebM with automatic lossless FFmpeg muxing.
+- **🎵 Studio Audio Extraction:** One-click conversion to MP3 (320 kbps), ultra-fast original M4A/AAC, audiophile FLAC, raw WAV, and OPUS.
 - **🛡️ Built-in Anti-Bot Protection:** Automatic Deno JS-runtime challenge solving and browser session integration to navigate modern website bot protections.
 - **⚡ Live Real-Time Telemetry:** Instant Server-Sent Events (SSE) streaming progress, download speed (MB/s), ETA timer, and byte counters.
-- **🔄 Local Media Converter:** Drag-and-drop any video/audio file (MKV, AVI, MOV, WebM, FLAC) to convert, resize, or compress locally.
+- **🔄 Local Media Converter & GIF Maker:** Drag-and-drop any video/audio file (MKV, AVI, MOV, WebM, FLAC) to convert, resize, compress, or generate animated GIFs.
 - **📦 Batch Queue:** Paste multiple links at once for uninterrupted sequential downloads.
 - **📂 One-Click Explorer & Playback:** Reveal files directly in Windows Explorer or play them in your default media player with zero path-escaping bugs.
 - **🔒 100% Local & Private:** Zero third-party web tracking, zero cloud proxying. All downloads stay exclusively on your local machine and are ignored by `.gitignore`.

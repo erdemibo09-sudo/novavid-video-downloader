@@ -141,15 +141,35 @@
             <div class="chip-group">
               <label class="chip-label">
                 <input type="radio" name="mainFormatChoice" value="mp4" checked>
-                <span class="chip">🎬 MP4 Video</span>
+                <span class="chip">🎬 MP4</span>
+              </label>
+              <label class="chip-label">
+                <input type="radio" name="mainFormatChoice" value="mkv">
+                <span class="chip">🎬 MKV</span>
+              </label>
+              <label class="chip-label">
+                <input type="radio" name="mainFormatChoice" value="webm">
+                <span class="chip">🎬 WebM</span>
               </label>
               <label class="chip-label">
                 <input type="radio" name="mainFormatChoice" value="mp3">
-                <span class="chip">🎵 MP3 (320 kbps Müzik)</span>
+                <span class="chip">🎵 MP3 (320k)</span>
+              </label>
+              <label class="chip-label">
+                <input type="radio" name="mainFormatChoice" value="m4a">
+                <span class="chip">⚡ M4A (Orijinal)</span>
+              </label>
+              <label class="chip-label">
+                <input type="radio" name="mainFormatChoice" value="flac">
+                <span class="chip">💎 FLAC</span>
               </label>
               <label class="chip-label">
                 <input type="radio" name="mainFormatChoice" value="wav">
-                <span class="chip">🎵 WAV (Kayıpsız)</span>
+                <span class="chip">🔊 WAV</span>
+              </label>
+              <label class="chip-label">
+                <input type="radio" name="mainFormatChoice" value="opus">
+                <span class="chip">🎙️ OPUS</span>
               </label>
             </div>
           </div>
@@ -211,16 +231,32 @@
                     <span class="chip">🎬 MP4 Video</span>
                   </label>
                   <label class="chip-label">
-                    <input type="radio" name="formatChoice" value="mp3">
-                    <span class="chip">🎵 MP3 (320 kbps Ses)</span>
+                    <input type="radio" name="formatChoice" value="mkv">
+                    <span class="chip">🎬 MKV Video</span>
                   </label>
                   <label class="chip-label">
-                    <input type="radio" name="formatChoice" value="wav">
-                    <span class="chip">🎵 WAV (Kayıpsız)</span>
+                    <input type="radio" name="formatChoice" value="webm">
+                    <span class="chip">🎬 WebM Video</span>
+                  </label>
+                  <label class="chip-label">
+                    <input type="radio" name="formatChoice" value="mp3">
+                    <span class="chip">🎵 MP3 (320k)</span>
                   </label>
                   <label class="chip-label">
                     <input type="radio" name="formatChoice" value="m4a">
-                    <span class="chip">🎵 M4A Ses</span>
+                    <span class="chip">⚡ M4A (Orijinal)</span>
+                  </label>
+                  <label class="chip-label">
+                    <input type="radio" name="formatChoice" value="flac">
+                    <span class="chip">💎 FLAC (Kayıpsız)</span>
+                  </label>
+                  <label class="chip-label">
+                    <input type="radio" name="formatChoice" value="wav">
+                    <span class="chip">🔊 WAV (Stüdyo)</span>
+                  </label>
+                  <label class="chip-label">
+                    <input type="radio" name="formatChoice" value="opus">
+                    <span class="chip">🎙️ OPUS (Web)</span>
                   </label>
                 </div>
               </div>
@@ -344,10 +380,22 @@
             <div class="option-group">
               <label>Hedef Format:</label>
               <select id="convTargetFormat" class="form-select">
-                <option value="mp4" selected>🎬 MP4 (H.264 - Tüm Cihazlarla Uyumlu)</option>
-                <option value="mp3">🎵 MP3 (320 kbps Yüksek Kalite Müzik)</option>
-                <option value="wav">🎵 WAV (Kayıpsız Ses)</option>
-                <option value="m4a">🎵 M4A Ses</option>
+                <optgroup label="🎬 Video Formatları">
+                  <option value="mp4" selected>🎬 MP4 (H.264 - Evrensel Standart)</option>
+                  <option value="mkv">🎬 MKV (Çoklu Ses / Altyazı Desteği)</option>
+                  <option value="webm">🎬 WebM (Modern VP9 Web)</option>
+                  <option value="mov">🎬 MOV (Apple QuickTime & Kurgu)</option>
+                </optgroup>
+                <optgroup label="🎵 Ses & Müzik Formatları">
+                  <option value="mp3">🎵 MP3 (320 kbps Stüdyo Kalite)</option>
+                  <option value="m4a">⚡ M4A / AAC (Apple & Mobil Uyumlu)</option>
+                  <option value="flac">💎 FLAC (Kayıpsız Odyofil)</option>
+                  <option value="wav">🔊 WAV (Ham Stüdyo Ses)</option>
+                  <option value="opus">🎙️ OPUS (Yüksek Verimli Web Ses)</option>
+                </optgroup>
+                <optgroup label="🖼️ Animasyon">
+                  <option value="gif">🖼️ GIF (Animasyonlu Hareketli Resim)</option>
+                </optgroup>
               </select>
             </div>
 

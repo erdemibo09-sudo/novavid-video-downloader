@@ -39,7 +39,9 @@ klasörüne kaydedilir. Arayüzün sağ üstündeki **"İndirilenler Klasörü"*
 
 ## 🛠️ Desteklenen Formatlar
 
-- **Desteklenen Platformlar:** 1.700'den fazla açık video, sosyal medya ve canlı yayın platformu.
-- **Video Formatları:** MP4 (H.264 / AAC - Evrensel uyumluluk), WebM, MKV
-- **Ses Formatları:** MP3 (320 kbps Yüksek Kalite), WAV (Kayıpsız Stüdyo), M4A / AAC
-- **Çözünürlükler:** 4K (2160p), 2K (1440p), 1080p, 720p, 480p, 360p
+- **Desteklenen Platformlar:** 1.700'den fazla açık video ve ses akışı sağlayan web platformu.
+- **İndirme ve Dönüştürme Formatları:**
+  - **Video:** MP4 (H.264 / AAC - Evrensel), MKV (Çoklu Ses/Altyazı), WebM (VP9 Web), MOV (Apple/Kurgu)
+  - **Ses & Müzik:** MP3 (320 kbps Stüdyo), M4A / AAC (Orijinal Ultra Hızlı), FLAC (Kayıpsız Odyofil), WAV (Ham Stüdyo), OPUS (Yüksek Verimli)
+  - **Animasyon:** GIF (Hareketli Resim Dönüştürücü)
+- **Çözünürlükler:** 4K (2160p), 2K (1440p), 1080p Full HD, 720p HD, 480p, 360p

@@ -394,22 +394,42 @@ async function handleRequest(req: Request): Promise<Response> {
         args.push("-x", "--audio-format", "wav");
       } else if (formatType === "m4a") {
         args.push("-x", "--audio-format", "m4a");
+      } else if (formatType === "flac") {
+        args.push("-x", "--audio-format", "flac");
+      } else if (formatType === "opus") {
+        args.push("-x", "--audio-format", "opus");
       } else {
-        // Video MP4 formatı
+        // Video Formatları (mp4, mkv, webm, mov)
+        let mergeExt = "mp4";
+        if (formatType === "mkv") mergeExt = "mkv";
+        else if (formatType === "webm") mergeExt = "webm";
+        else if (formatType === "mov") mergeExt = "mov";
+
         if (quality === "best") {
-          args.push("-f", "bv*[ext=mp4]+ba[ext=m4a]/bv*+ba/b[ext=mp4]/b");
+          if (formatType === "webm") {
+            args.push("-f", "bv*[ext=webm]+ba[ext=webm]/bv*+ba/b");
+          } else {
+            args.push("-f", "bv*[ext=mp4]+ba[ext=m4a]/bv*+ba/b[ext=mp4]/b");
+          }
         } else {
           const height = parseInt(quality, 10);
           if (!isNaN(height) && height > 0) {
-            args.push(
-              "-f",
-              `bv*[height<=${height}][ext=mp4]+ba[ext=m4a]/bv*[height<=${height}]+ba/b[height<=${height}]/b`
-            );
+            if (formatType === "webm") {
+              args.push(
+                "-f",
+                `bv*[height<=${height}][ext=webm]+ba[ext=webm]/bv*[height<=${height}]+ba/b[height<=${height}]/b`
+              );
+            } else {
+              args.push(
+                "-f",
+                `bv*[height<=${height}][ext=mp4]+ba[ext=m4a]/bv*[height<=${height}]+ba/b[height<=${height}]/b`
+              );
+            }
           } else {
             args.push("-f", "bv*[ext=mp4]+ba[ext=m4a]/bv*+ba/b[ext=mp4]/b");
           }
         }
-        args.push("--merge-output-format", "mp4");
+        args.push("--merge-output-format", mergeExt);
       }
 
       if (subtitles) {
@@ -465,7 +485,7 @@ async function handleRequest(req: Request): Promise<Response> {
                 job.speed = "Birleştiriliyor...";
                 notifyJob(job);
               } else if (trimmed.includes("[ExtractAudio]") || trimmed.includes("Destination: ")) {
-                if (job.formatType === "mp3" || job.formatType === "wav" || job.formatType === "m4a") {
+                if (["mp3", "wav", "m4a", "flac", "opus"].includes(job.formatType)) {
                   job.status = "extracting";
                   job.speed = "Ses dönüştürülüyor...";
                   notifyJob(job);
@@ -729,6 +749,16 @@ async function handleRequest(req: Request): Promise<Response> {
         args.push("-vn", "-c:a", "pcm_s16le");
       } else if (targetFormat === "m4a") {
         args.push("-vn", "-c:a", "aac", "-b:a", "256k");
+      } else if (targetFormat === "flac") {
+        args.push("-vn", "-c:a", "flac");
+      } else if (targetFormat === "opus") {
+        args.push("-vn", "-c:a", "libopus", "-b:a", "192k");
+      } else if (targetFormat === "gif") {
+        args.push("-vf", "fps=12,scale=480:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse");
+      } else if (targetFormat === "mkv" || targetFormat === "mov") {
+        args.push("-c:v", "libx264", "-c:a", "aac", "-b:a", "192k", "-crf", "20", "-preset", "medium");
+      } else if (targetFormat === "webm") {
+        args.push("-c:v", "libvpx-vp9", "-crf", "30", "-b:v", "0", "-c:a", "libopus", "-b:a", "128k");
       } else if (targetFormat === "mp4") {
         args.push("-c:v", "libx264", "-c:a", "aac", "-b:a", "192k");
         if (preset === "compress") {
