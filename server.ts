@@ -1,4 +1,4 @@
-// NovaVid - Ultra HD Video Downloader & Converter (Deno Backend - Zero Dependencies)
+// XyfionVid - Ultra HD Video Downloader & Converter (Deno Backend - Zero Dependencies)
 
 const PORT = 3000;
 const ROOT_DIR = Deno.cwd();
@@ -8,10 +8,10 @@ const PUBLIC_DIR = `${ROOT_DIR}\\public`;
 const userProfile = Deno.env.get("USERPROFILE") || "";
 let DOWNLOADS_DIR = `${ROOT_DIR}\\downloads`;
 if (userProfile) {
-  const novaVidPath = `${userProfile}\\Desktop\\NovaVid\\downloads`;
+  const xyfionPath = `${userProfile}\\Desktop\\XyfionVid\\downloads`;
   try {
-    if (Deno.statSync(novaVidPath).isDirectory) {
-      DOWNLOADS_DIR = novaVidPath;
+    if (Deno.statSync(xyfionPath).isDirectory) {
+      DOWNLOADS_DIR = xyfionPath;
     }
   } catch {
     // fallback to ROOT_DIR\\downloads
@@ -157,7 +157,7 @@ const sysPath = Deno.env.get("PATH") || "";
 const augmentedPath = [denoDir, ffmpegBinDir, sysPath].filter(Boolean).join(";");
 
 console.log("=========================================");
-console.log("🚀 NovaVid - Ultra HD Video Downloader & Converter");
+console.log("🚀 XyfionVid - Ultra HD Video Downloader & Converter");
 console.log(`🌐 Web UI: http://localhost:${PORT}`);
 console.log(`📁 Downloads: ${DOWNLOADS_DIR}`);
 console.log(`⚡ yt-dlp: ${ytDlpPath}`);
@@ -545,10 +545,26 @@ async function handleRequest(req: Request): Promise<Response> {
                 }
               } else if (trimmed.startsWith("[download] Destination: ")) {
                 job.outputFile = trimmed.replace("[download] Destination: ", "").trim();
+                if (!job.title || job.title === "Toplu İndirme" || job.title === "Video İndiriliyor...") {
+                  const baseName = job.outputFile.split(/[/\\]/).pop() || "";
+                  const clean = baseName.replace(/\.[a-zA-Z0-9]+$/, "").replace(/\s*\[[a-zA-Z0-9_-]{11}\]$/, "").trim();
+                  if (clean) {
+                    job.title = clean;
+                    notifyJob(job);
+                  }
+                }
               } else if (trimmed.includes("has already been downloaded")) {
                 const match = trimmed.match(/\[download\]\s*(?:Destination:\s*)?(.+?)\s+has already been downloaded/i);
                 if (match && match[1]) {
                   job.outputFile = match[1].trim();
+                  if (!job.title || job.title === "Toplu İndirme" || job.title === "Video İndiriliyor...") {
+                    const baseName = job.outputFile.split(/[/\\]/).pop() || "";
+                    const clean = baseName.replace(/\.[a-zA-Z0-9]+$/, "").replace(/\s*\[[a-zA-Z0-9_-]{11}\]$/, "").trim();
+                    if (clean) {
+                      job.title = clean;
+                      notifyJob(job);
+                    }
+                  }
                 }
               }
             }

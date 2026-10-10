@@ -371,7 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="dl-header">
         <div class="dl-title-box">
           <span class="dl-format-tag ${formatType}">${formatType.toUpperCase()}</span>
-          <span class="dl-title" title="${escapeHtml(title)}">${escapeHtml(title)}</span>
+          <span class="dl-title" id="title_${jobId}" title="${escapeHtml(title)}">${escapeHtml(title)}</span>
         </div>
         <span class="dl-percent" id="percent_${jobId}">%0</span>
       </div>
@@ -420,6 +420,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const etaEl = document.getElementById(`eta_${jobId}`);
         const sizeEl = document.getElementById(`size_${jobId}`);
         const actionsEl = document.getElementById(`actions_${jobId}`);
+        const titleEl = document.getElementById(`title_${jobId}`);
+
+        if (titleEl && job.title && job.title !== "Toplu İndirme" && job.title !== "Video İndiriliyor...") {
+          titleEl.textContent = job.title;
+          titleEl.title = job.title;
+        }
 
         if (percentEl) percentEl.textContent = `%${Math.round(job.percent)}`;
         if (barEl) barEl.style.width = `${job.percent}%`;

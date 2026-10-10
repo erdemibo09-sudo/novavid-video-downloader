@@ -1,8 +1,8 @@
-# ⚡ NovaVid — Ultra HD Video Downloader & Converter
+# ⚡ XyfionVid — Ultra HD Video Downloader & Converter
 
 <div align="center">
 
-![NovaVid Banner](https://img.shields.io/badge/NovaVid-v1.0.0-6366f1?style=for-the-badge)
+![XyfionVid Banner](https://img.shields.io/badge/XyfionVid-v1.0.0-6366f1?style=for-the-badge)
 ![Build Status](https://img.shields.io/badge/Build-Passing-10b981?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-0078d4?style=for-the-badge&logo=windows)
 ![Engine](https://img.shields.io/badge/Engine-yt--dlp%20%2B%20FFmpeg-f59e0b?style=for-the-badge)
@@ -36,10 +36,10 @@
 - Windows 10 or Windows 11
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp), [FFmpeg](https://ffmpeg.org/), and [Deno](https://deno.com/) *(automatically detected from WinGet or system PATH)*
 
-### 2. Launching NovaVid
-Double-click **`Start.bat`** (or `NovaVid.lnk` on your Desktop).
+### 2. Launching XyfionVid
+Double-click **`Start.bat`** (or `XyfionVid.lnk` on your Desktop).
 
-The background server will initialize, and NovaVid will automatically open in a native desktop window:
+The background server will initialize, and XyfionVid will automatically open in a native desktop window:
 ```text
 🌐 Web UI: http://localhost:3000
 📁 Downloads: .\downloads
@@ -53,11 +53,11 @@ The background server will initialize, and NovaVid will automatically open in a 
 
 ## 🛠️ Architecture
 
-NovaVid is architected for zero-bloat performance:
+XyfionVid is architected for zero-bloat performance:
 
 ```mermaid
 graph LR
-    UI[NovaVid Desktop UI] <-->|REST API + SSE Stream| Server[Local Deno Server :3000]
+    UI[XyfionVid Desktop UI] <-->|REST API + SSE Stream| Server[Local Deno Server :3000]
     Server -->|Signatures & Extraction| DenoJS[Deno JS Solver]
     Server -->|Streams & Formats| YTDLP[yt-dlp Engine]
     Server -->|Muxing & Encoding| FFmpeg[FFmpeg Binary]
@@ -86,14 +86,14 @@ This project is open-source under the [MIT License](LICENSE).
 ## ⚖️ Legal Disclaimer / Yasal Sorumluluk Reddi
 
 ### 🇬🇧 English
-> **Disclaimer:** NovaVid is an open-source software suite developed strictly for educational, research, and personal media archiving (fair use) purposes.
+> **Disclaimer:** XyfionVid is an open-source software suite developed strictly for educational, research, and personal media archiving (fair use) purposes.
 > - This software does **not** bypass digital rights management (DRM) protections.
 > - The developers and contributors do **not** host, store, stream, or distribute any copyrighted media files.
 > - Users are solely responsible for ensuring that their download and conversion activities comply with applicable local laws, intellectual property rights, and the terms of service of the respective platforms.
 > - The authors and maintainers assume no liability for misuse, copyright infringement, or unauthorized distribution of third-party content.
 
 ### 🇹🇷 Türkçe
-> **Yasal Sorumluluk Reddi:** NovaVid, yalnızca eğitim, araştırma ve kişisel medya arşivleme (adil kullanım / fair use) amacıyla geliştirilmiş açık kaynaklı bir yardımcı yazılımdır.
+> **Yasal Sorumluluk Reddi:** XyfionVid, yalnızca eğitim, araştırma ve kişisel medya arşivleme (adil kullanım / fair use) amacıyla geliştirilmiş açık kaynaklı bir yardımcı yazılımdır.
 > - Bu yazılım dijital hak yönetimi (DRM) veya şifreli kopya koruma sistemlerini **aşmaz**.
 > - Geliştiriciler hiçbir telifli medya içeriğini barındırmaz, sunmaz veya dağıtmaz.
 > - Yazılımın kullanımı sırasında yerel telif hakkı yasalarına, fikri mülkiyet haklarına ve ilgili platformların kullanım şartlarına uyulması tamamen son kullanıcının sorumluluğundadır.
